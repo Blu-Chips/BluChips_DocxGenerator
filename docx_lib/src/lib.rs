@@ -34,6 +34,25 @@ pub struct AndroidDocBuilder {
     doc: Docx,
 }
 
+use serde::Deserialize;
+
+#[derive(Deserialize, Debug)]
+struct Delta<'a> {
+    ops: Vec<Op<'a>>,
+}
+
+#[derive(Deserialize, Debug)]
+struct Op<'a> {
+    insert: &'a str,
+    attributes: Option<Attributes>,
+}
+
+#[derive(Deserialize, Debug)]
+struct Attributes {
+    bold: Option<bool>,
+    italic: Option<bool>,
+}
+
 impl AndroidDocBuilder {
     #[generate_interface(constructor)]
     pub fn new() -> AndroidDocBuilder {
@@ -42,11 +61,31 @@ impl AndroidDocBuilder {
 
     /// Add a text to the doc
     #[generate_interface]
-    pub fn add_text(&mut self, text: &str) {
-        log::debug!("Adding Text {}", text);
-        self.doc = self
-            .doc.clone()
-            .add_paragraph(Paragraph::new().add_run(Run::new().add_text(text)));
+    pub fn add_text(&mut self, json_text: &str) {
+        log::debug!("Adding json {}", json_text);
+        let mut run = Run::new();
+        let delta: Result<Delta, _> = serde_json::from_str(json_text);
+
+        match delta {
+            Ok(delta) => {
+                for op in delta.ops {
+                    let text = op.insert.as_str();
+                    if let Some(attributes) = op.attributes {
+                        if attributes.bold.unwrap_or(false) {
+                            run = run.bold();
+                        }
+                        if attributes.italic.unwrap_or(false) {
+                            run = run.italic();
+                        }
+                    }
+                    run = run.add_text(text);
+                }
+            }
+            Err(e) => {
+                log::error!("Error parsing json: {}", e);
+            }
+        }
+        self.doc = self.doc.clone().add_paragraph(Paragraph::new().add_run(run));
     }
 
     /// Add Image to the doc
