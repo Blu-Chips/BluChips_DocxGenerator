@@ -33,7 +33,8 @@ import java.util.*
 class MainActivity : ComponentActivity() {
     val WRITE_REQUEST_CODE = 1235
     val READ_REQUEST_CODE = 1236
-    val doc = AndroidDocBuilder();
+    val doc = AndroidDocBuilder()
+    private lateinit var webSocketClient: WebSocketClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val permissionW = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -66,6 +67,20 @@ class MainActivity : ComponentActivity() {
 
         var fullPathToFile =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString() + "/${timeStamp}_doc.docx"
+        
+        // Initialize the WebSocket client
+        webSocketClient = WebSocketClient()
+        webSocketClient.connect("documentId", "userId")
+
+        // Initialize the Quill editor
+        val quill = Quill(findViewById(R.id.editor))
+
+        // Set up the editor to send messages to the WebSocket server
+        quill.setOnTextChangedListener { text, delta, oldDelta, source ->
+            if (source == Quill.SOURCE_USER) {
+                webSocketClient.sendMessage("documentId", "userId", "edit", text)
+            }
+        }
         setContent {
             DocxGeneratorTheme {
                 Surface(
