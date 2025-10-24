@@ -4,6 +4,17 @@ plugins {
     id 'kotlin-kapt'
 }
 
+// Force Java 17 for AGP 8.7.0 compatibility
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
 android {
     namespace 'com.example.docxgenerator'
     compileSdk 35
@@ -68,7 +79,12 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     implementation "androidx.navigation:navigation-compose:2.7.7"
-    implementation "com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc06"
+    implementation "com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc05"
+    
+    // WebSocket dependencies
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'org.java-websocket:Java-WebSocket:1.5.7'
+    
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
@@ -78,7 +94,14 @@ dependencies {
 
 }
 
-// add the following
+// Rust native library build tasks (DISABLED - using pre-compiled .so files)
+// To rebuild Rust libraries, you need:
+// 1. Install Rust: https://rustup.rs/
+// 2. Add Android targets: rustup target add aarch64-linux-android armv7-linux-androideabi
+// 3. Install Visual Studio with C++ build tools
+// 4. Uncomment the build tasks below
+
+/*
 def rustBasePath = "../docx_lib"
 def archTriplets = [
         'armeabi-v7a': 'armv7-linux-androideabi',
@@ -119,3 +142,4 @@ archTriplets.each { arch, target ->
     }
     clean.dependsOn "clean-${arch}"
 }
+*/

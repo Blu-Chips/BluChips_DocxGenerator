@@ -8,19 +8,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.docxgenerator.viewmodel.DocumentViewModel
-import com.mohamedrejeb.richeditor.model.rememberRichTextEditorState
-import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 
 @Composable
 fun EditorScreen(documentViewModel: DocumentViewModel, docId: Int) {
     val document by documentViewModel.getDocumentById(docId).collectAsState(initial = null)
     var title by remember { mutableStateOf("") }
-    val editorState = rememberRichTextEditorState()
+    var content by remember { mutableStateOf("") }
 
     LaunchedEffect(document) {
         document?.let {
             title = it.title
-            editorState.setHtml(it.content)
+            content = it.content
         }
     }
 
@@ -36,17 +34,20 @@ fun EditorScreen(documentViewModel: DocumentViewModel, docId: Int) {
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
-        RichTextEditor(
-            state = editorState,
+        OutlinedTextField(
+            value = content,
+            onValueChange = { content = it },
+            label = { Text("Document Content") },
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1.0f)
+                .weight(1.0f),
+            maxLines = Int.MAX_VALUE
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
                 document?.let {
-                    val updatedDocument = it.copy(title = title, content = editorState.toHtml())
+                    val updatedDocument = it.copy(title = title, content = content)
                     documentViewModel.update(updatedDocument)
                 }
             },
