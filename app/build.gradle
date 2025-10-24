@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-kapt'
 }
 
-// Force Java 17 for AGP 8.7.0 compatibility
+// Force Java 17 for AGP 8.1.1 compatibility
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -57,7 +57,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.15'
+        kotlinCompilerExtensionVersion '1.5.2'
     }
     packaging {
         resources {
