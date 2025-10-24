@@ -1,4 +1,4 @@
-package com.example.docxgenerator.websocket;
+commitpackage com.example.docxgenerator.websocket;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
