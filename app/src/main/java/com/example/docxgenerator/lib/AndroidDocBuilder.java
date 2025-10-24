@@ -6,6 +6,10 @@ import androidx.annotation.NonNull;
  */
 public final class AndroidDocBuilder {
 
+    static {
+        System.loadLibrary("docx_lib");
+    }
+
     public AndroidDocBuilder() {
         mNativeObj = init();
     }

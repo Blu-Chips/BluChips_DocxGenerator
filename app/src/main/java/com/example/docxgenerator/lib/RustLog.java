@@ -4,6 +4,10 @@ package com.example.docxgenerator.lib;
 
 public final class RustLog {
 
+    static {
+        System.loadLibrary("docx_lib");
+    }
+
     public static native void initialiseLogging();
 
     private RustLog() {}

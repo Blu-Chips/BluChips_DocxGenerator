@@ -3,6 +3,10 @@
 package com.example.docxgenerator.lib;
 
 /*package*/ final class JNIReachabilityFence {
+    static {
+        System.loadLibrary("docx_lib");
+    }
+    
     private JNIReachabilityFence() {}
     /*package*/ static native void reachabilityFence1(Object ref1);
     /*package*/ static native void reachabilityFence2(Object ref1, Object ref2);

@@ -4,7 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.* 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.* 
+import androidx.compose.material3.* 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
@@ -45,12 +45,12 @@ fun DocumentListItem(document: Document, onDocumentClick: (Int) -> Unit) {
             .fillMaxWidth()
             .padding(8.dp)
             .clickable { onDocumentClick(document.id) },
-        elevation = 4.dp
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Text(
             text = document.title,
             modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.titleLarge
         )
     }
 }

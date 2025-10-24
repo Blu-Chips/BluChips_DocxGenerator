@@ -1,15 +1,15 @@
 package com.example.docxgenerator.ui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.docxgenerator.viewmodel.DocumentViewModel
 import com.mohamedrejeb.richeditor.model.rememberRichTextEditorState
-import com.mohamedrejeb.richeditor.ui.material.RichTextEditor
+import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 
 @Composable
 fun EditorScreen(documentViewModel: DocumentViewModel, docId: Int) {
@@ -29,7 +29,7 @@ fun EditorScreen(documentViewModel: DocumentViewModel, docId: Int) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        TextField(
+        OutlinedTextField(
             value = title,
             onValueChange = { title = it },
             label = { Text("Document Title") },
