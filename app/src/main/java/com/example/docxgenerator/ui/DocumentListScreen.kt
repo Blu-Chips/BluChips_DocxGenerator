@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.example.docxgenerator.database.Document
 import com.example.docxgenerator.viewmodel.DocumentViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentListScreen(
     documentViewModel: DocumentViewModel,
@@ -24,10 +25,26 @@ fun DocumentListScreen(
     val documents by documentViewModel.allDocuments.collectAsState(initial = emptyList())
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { 
+                    Text(
+                        "BluChips Documents",
+                        style = MaterialTheme.typography.headlineMedium
+                    ) 
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            )
+        },
         floatingActionButton = {
-            FloatingActionButton(onClick = onNewDocumentClick) {
-                Icon(Icons.Filled.Add, contentDescription = "New Document")
-            }
+            ExtendedFloatingActionButton(
+                onClick = onNewDocumentClick,
+                icon = { Icon(Icons.Filled.Add, contentDescription = "New Document") },
+                text = { Text("New Document", style = MaterialTheme.typography.titleMedium) }
+            )
         }
     ) {
         LazyColumn(modifier = Modifier.padding(it)) {
@@ -43,14 +60,25 @@ fun DocumentListItem(document: Document, onDocumentClick: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(12.dp)
             .clickable { onDocumentClick(document.id) },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp)
     ) {
         Text(
             text = document.title,
-            modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = document.content.take(100),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2
         )
+        }
     }
 }
