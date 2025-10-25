@@ -40,8 +40,9 @@ android {
 
     buildTypes {
         debug {
-            // Remove ABI filter for debug - allows testing UI on x86_64 emulators
+            // No ABI filter for debug - allows testing UI on x86_64 emulators
             // Native library features will be unavailable on non-ARM devices
+            // This enables emulator support for UI testing
         }
         release {
             // Only ARM architectures for release (x86/x86_64 libraries not available)
@@ -51,11 +52,13 @@ android {
         }
     }
     
-    packagingOptions {
-        // Don't fail build if native libs are missing for some ABIs
+    packaging {
+        // Handle missing native libraries gracefully for x86_64 emulators
         jniLibs {
             useLegacyPackaging = false
             pickFirsts += ['**/*.so']
+            // Don't fail if native libs are missing for some ABIs
+            excludes += ['/META-INF/{AL2.0,LGPL2.1}']
         }
     }
     compileOptions {

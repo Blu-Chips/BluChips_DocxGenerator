@@ -18,7 +18,11 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditorScreen(documentViewModel: DocumentViewModel, docId: Int) {
+fun EditorScreen(
+    documentViewModel: DocumentViewModel, 
+    docId: Int,
+    onClose: () -> Unit
+) {
     val document by documentViewModel.getDocumentById(docId).collectAsState(initial = null)
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
@@ -122,22 +126,66 @@ fun EditorScreen(documentViewModel: DocumentViewModel, docId: Int) {
                 textStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp)
         )
             Spacer(modifier = Modifier.height(20.dp))
+            
+            // Save and Close Buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Save Button
         Button(
             onClick = {
                 document?.let {
                     val updatedDocument = it.copy(title = title, content = content)
                     documentViewModel.update(updatedDocument)
+                            
+                            // Broadcast if server is running
+                            if (isServerRunning) {
+                                webSocketManager.broadcastDocumentUpdate(docId, title, content)
+                            }
                 }
             },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(
+                        text = "SAVE",
+                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+                
+                // Save and Close Button
+                Button(
+                    onClick = {
+                        document?.let {
+                            val updatedDocument = it.copy(title = title, content = content)
+                            documentViewModel.update(updatedDocument)
+                            
+                            // Broadcast if server is running
+                            if (isServerRunning) {
+                                webSocketManager.broadcastDocumentUpdate(docId, title, content)
+                            }
+                        }
+                        onClose()
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(56.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary
+                    )
         ) {
-                Text(
-                    text = "SAVE DOCUMENT",
-                    fontSize = 18.sp,
-                    style = MaterialTheme.typography.titleLarge
-                )
+                    Text(
+                        text = "SAVE & CLOSE",
+                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
         }
     }

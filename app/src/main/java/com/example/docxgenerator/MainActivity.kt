@@ -60,7 +60,11 @@ fun NavGraph(
             backStackEntry ->
             val docId = backStackEntry.arguments?.getInt("docId")
             if (docId != null) {
-                EditorScreen(documentViewModel = documentViewModel, docId = docId)
+                EditorScreen(
+                    documentViewModel = documentViewModel,
+                    docId = docId,
+                    onClose = { navController.popBackStack() }
+                )
             }
         }
     }

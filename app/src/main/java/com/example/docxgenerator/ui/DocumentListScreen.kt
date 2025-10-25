@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.example.docxgenerator.database.Document
 import com.example.docxgenerator.viewmodel.DocumentViewModel
 import com.example.docxgenerator.websocket.WebSocketManager
+import com.example.docxgenerator.util.DeviceHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +62,13 @@ fun DocumentListScreen(
         }
     ) { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
+            // Emulator Info Card (only show on emulators)
+            if (DeviceHelper.isEmulator() && !DeviceHelper.isArmArchitecture()) {
+                item {
+                    EmulatorInfoCard()
+                }
+            }
+            
             // WebSocket Server Status Card
             item {
                 WebSocketServerCard(
@@ -83,6 +91,52 @@ fun DocumentListScreen(
                 DocumentListItem(
                     document = document,
                     onDocumentClick = onDocumentClick
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun EmulatorInfoCard() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            Text(
+                text = "ℹ️",
+                fontSize = 24.sp,
+                modifier = Modifier.padding(end = 12.dp)
+            )
+            Column {
+                Text(
+                    text = "Emulator Mode",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Running on x86_64 emulator. All core features work! Note: Native library features (if any) are unavailable on this architecture.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Architecture: ${DeviceHelper.getArchitectureName()}",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.7f)
                 )
             }
         }
